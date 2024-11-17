@@ -1,0 +1,20 @@
+fido2:
+  rp:
+    #id: fido2.pabex.com.ar
+    id: ox-pure-gorilla.ngrok-free.app
+    #id: auth-test.encodesa.com.ar
+    origin: android:apk-key-hash:J6KDeFLOA5ZT5Hn_zykzbUrGvY4ZQhnA1sxAqDJEwC0 #Id de la entidad que solicita la passkey, es el hash de la aplicación
+    #En caso de que existan múltiples aplicaciones con permiso de crear passkeys para una RP es necesario registrar los diferentes orígenes.
+    port: 443
+conformance:
+  url: localhost:8080
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.hibernate: DEBUG
+    com.linecorp.line: DEBUG
+fido2-server:
+  host: fido2-server
+  scheme: http
+  port: 8081
+

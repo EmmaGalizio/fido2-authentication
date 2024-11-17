@@ -1,0 +1,21 @@
+fido2:
+  rp:
+    #id: fido2.pabex.com.ar
+    id: ox-pure-gorilla.ngrok-free.app
+    #id: auth-test.encodesa.com.ar
+    origin: android:apk-key-hash:J6KDeFLOA5ZT5Hn_zykzbUrGvY4ZQhnA1sxAqDJEwC0
+    port: 8080
+
+fido2-server:
+  scheme: http
+  host: localhost
+  port: 8081
+
+conformance:
+  url: localhost:8080
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.hibernate: DEBUG
+    com.linecorp.line: DEBUG
+

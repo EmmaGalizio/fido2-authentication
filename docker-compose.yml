@@ -1,0 +1,49 @@
+services:
+  redis:
+    image: redis:8.0-M02-alpine3.20
+    container_name: redis-fido-session
+    #restart: always
+    ports:
+      - '6379:6379'
+
+    command: ["redis-server", "--requirepass", "redis1234"]
+
+    #volumes:
+    #  - ./redis-vol:/data
+  db:
+    image: mysql:8.4.0
+    environment:
+      - 'MYSQL_DATABASE=db_fido2'
+      #- 'MYSQL_PASSWORD=root'
+      - 'MYSQL_ROOT_PASSWORD=root'
+      #- 'MYSQL_USER=myuser'
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      timeout: 10s
+      retries: 10
+
+  #fido2-server:
+  #  build:
+  #    context: .
+  #    dockerfile: fido2-server/Dockerfile
+#
+  #  depends_on:
+  #    db:
+  #      condition: service_healthy
+#
+  #rp-server:
+  #  build:
+  #    context: .
+  #    dockerfile: fido2-rp/Dockerfile
+  #  ports:
+  #    - '8080:8080'
+  #  depends_on:
+  #    db:
+  #      condition: service_healthy
+
+
+

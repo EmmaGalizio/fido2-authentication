@@ -1,0 +1,23 @@
+server:
+  port: 8080
+logbook:
+  write:
+    level: INFO
+  obfuscate:
+    headers:
+      - host
+      - origin
+      - referer
+      - user-agent
+      - accept-encoding
+  exclude:
+    - /health
+fido2-server:
+  endpoint:
+    get-reg-challenge: /fido2/reg/challenge
+    get-auth-challenge: /fido2/auth/challenge
+    send-reg-response: /fido2/reg/response
+    send-auth-response: /fido2/auth/response
+    get-delete-credentials: /fido2/credentials
+
+
