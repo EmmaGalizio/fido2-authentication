@@ -26,24 +26,22 @@ services:
       timeout: 10s
       retries: 10
 
-  #fido2-server:
-  #  build:
-  #    context: .
-  #    dockerfile: fido2-server/Dockerfile
-#
-  #  depends_on:
-  #    db:
-  #      condition: service_healthy
-#
-  #rp-server:
-  #  build:
-  #    context: .
-  #    dockerfile: fido2-rp/Dockerfile
-  #  ports:
-  #    - '8080:8080'
-  #  depends_on:
-  #    db:
-  #      condition: service_healthy
+  fido2-server:
+    build:
+      context: .
+      dockerfile: fido2-server/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+  rp-server:
+    build:
+      context: .
+      dockerfile: fido2-rp/Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      db:
+        condition: service_healthy
 
 
 
