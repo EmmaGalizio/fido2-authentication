@@ -11,5 +11,14 @@
         "27:A2:83:78:52:CE:03:96:53:E4:79:FF:CF:29:33:6D:4A:C6:BD:8E:19:42:19:C0:D6:CC:40:A8:32:44:C0:2D"
       ]
     }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "web",
+      "site": "https://ox-pure-gorilla.ngrok-free.app"
+    }
   }
 ]

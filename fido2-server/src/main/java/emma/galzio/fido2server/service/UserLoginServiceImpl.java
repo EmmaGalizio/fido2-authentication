@@ -1,6 +1,8 @@
 package emma.galzio.fido2server.service;
 
 import emma.galzio.fido2server.common.PublicKeyCredentialRpEntity;
+import emma.galzio.fido2server.common.server.AuthOptionRequest;
+import emma.galzio.fido2server.common.server.AuthOptionResponse;
 import emma.galzio.fido2server.common.server.RegOptionResponse;
 import emma.galzio.fido2server.common.server.ServerPublicKeyCredentialUserEntity;
 import emma.galzio.fido2server.model.Session;
@@ -31,21 +33,24 @@ public class UserLoginServiceImpl implements UserLoginService {
         log.info("Sesion: {}", session);
 
 
-        RegOptionResponse regOptionResponse = session.getRegOptionResponse();
+        AuthOptionResponse regOptionResponse = session.getAuthOptionResponse();
         //Probar user acá
         //ServerPublicKeyCredentialUserEntity user = regOptionResponse.getUser();
-        PublicKeyCredentialRpEntity rp = regOptionResponse.getRp();
+        String sessionRpId = regOptionResponse.getRpId();
 
-        if(!rpId.equals(rp.getId())){
+        if(!rpId.equals(sessionRpId)){
             //TODO threat invalid rpID
             return null;
         }
         UserLoginDto userLoginDto = new UserLoginDto();
         if(session.getUser() == null) return null;
         User user = session.getUser();
-        userLoginDto.setId(user.getEmail());
+        userLoginDto.setId(user.getId());
         userLoginDto.setUsername(user.getUsername());
         userLoginDto.setDisplayName(user.getFirstName() + " " + user.getLastName());
+        userLoginDto.setEmail(user.getEmail());
+        userLoginDto.setFirstName(user.getFirstName());
+        userLoginDto.setLastName(user.getLastName());
         //TODO threat get user from ID
         /*List<UserKey> withUserId = userKeyService.getWithUserId(rpId, user.getId());
         UserKey userKey = withUserId.get(0);

@@ -22,11 +22,14 @@ import emma.galzio.fido2server.common.PublicKeyCredentialType;
 import emma.galzio.fido2server.common.extension.AuthenticationExtensionsClientInputs;
 import emma.galzio.fido2server.common.server.*;
 import emma.galzio.fido2server.ServerConstant;
+import emma.galzio.fido2server.entity.UserEntity;
 import emma.galzio.fido2server.error.InternalErrorCode;
 import emma.galzio.fido2server.exception.FIDO2ServerRuntimeException;
 import emma.galzio.fido2server.model.Session;
 import emma.galzio.fido2server.model.User;
 import emma.galzio.fido2server.model.UserKey;
+import emma.galzio.fido2server.repository.IUserRepository;
+import emma.galzio.fido2server.repository.SessionRepository;
 import emma.galzio.fido2server.util.ChallengeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final RpService rpService;
     private final UserKeyService userKeyService;
     private final SessionService sessionService;
+    private final IUserRepository userRepository;
+    private final SessionRepository sessionRepository;
 
     @Value("${fido.fido2.session-ttl-millis}")
     private long sessionTtlMillis;
@@ -52,10 +57,12 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Autowired
     public ChallengeServiceImpl(RpService rpService,
                                 UserKeyService userKeyService,
-                                SessionService sessionService) {
+                                SessionService sessionService, IUserRepository userRepository, SessionRepository sessionRepository) {
         this.rpService = rpService;
         this.userKeyService = userKeyService;
         this.sessionService = sessionService;
+        this.userRepository = userRepository;
+        this.sessionRepository = sessionRepository;
     }
 
     /**
@@ -219,9 +226,23 @@ public class ChallengeServiceImpl implements ChallengeService {
                         .build();
 
         session.setAuthOptionResponse(authOptionResponse);
+        UserEntity userEntity = userRepository.findById(userId).orElse(null);
+
+        User user = new User();
+        if(userEntity != null) {
+            user.setId(userId);
+            user.setEmail(userEntity.getEmail());
+            user.setUsername(userEntity.getUsername());
+            user.setFirstName(userEntity.getFirstName());
+            user.setLastName(userEntity.getLastName());
+        }
+
+        session.setUser(user);
 
         // write session
         sessionService.createSession(session);
+
+        //sessionRepository.save(session);
 
         log.debug("authOptionResponse: {}", authOptionResponse);
 

@@ -291,7 +291,7 @@ function getTableWithData(credentials) {
  */
 function getRegChallenge(serverPublicKeyCredentialCreationOptionsRequest) {
     logObject("Get reg challenge", serverPublicKeyCredentialCreationOptionsRequest);
-    return rest_post("/attestation/options", serverPublicKeyCredentialCreationOptionsRequest)
+    return rest_post("/attestation/options", serverPublicKeyCredentialCreationOptionsRequest, "https://ox-pure-gorilla.ngrok-free.app")
         .then(response => {
             logObject("Get reg challenge response", response);
             if (response.status !== 'ok') {
@@ -309,7 +309,7 @@ function getRegChallenge(serverPublicKeyCredentialCreationOptionsRequest) {
  */
 function getAuthChallenge(serverPublicKeyCredentialGetOptionsRequest) {
     logObject("Get auth challenge", serverPublicKeyCredentialGetOptionsRequest);
-    return rest_post("/assertion/options", serverPublicKeyCredentialGetOptionsRequest)
+    return rest_post("/assertion/options", serverPublicKeyCredentialGetOptionsRequest, "https://ox-pure-gorilla.ngrok-free.app")
         .then(response => {
             logObject("Get auth challenge", response);
             if (response.status !== 'ok') {
@@ -375,7 +375,7 @@ function createCredential(options) {
             logVariable("response.transports", attestation.response.transports);
             logVariable("id", attestation.type);
 
-            return rest_post("/attestation/result", attestation);
+            return rest_post("/attestation/result", attestation, "https://ox-pure-gorilla.ngrok-free.app");
         })
         .catch(function(error) {
             logVariable("create credential error", error);
@@ -431,7 +431,7 @@ function getAssertion(options) {
             logVariable("response.signature (b64url)", assertion.response.signature);
             logVariable("id", assertion.type);
 
-            return rest_post("/assertion/result", assertion);
+            return rest_post("/assertion/result", assertion, "https://ox-pure-gorilla.ngrok-free.app");
         })
         .catch(function(error) {
             logVariable("get assertion error", error);
@@ -556,7 +556,7 @@ function rest_get(endpoint) {
  * @param {any} object
  * @returns {Promise} Promise resolving to javascript object received back
  */
-function rest_post(endpoint, object) {
+/*function rest_post(endpoint, object) {
     return fetch(endpoint, {
         method: "POST",
         credentials: "same-origin",
@@ -568,6 +568,29 @@ function rest_post(endpoint, object) {
     .then(response => {
         return response.json();
     });
+}*/
+function rest_post(endpoint, object, rpId = null) {
+    const headers = new Headers({
+        "content-type": "application/json"
+    });
+
+    // Agrega el rpId como header si está definido
+    if (rpId) {
+        headers.append("X-Rp-Id", rpId);
+    }
+
+    return fetch(endpoint, {
+        method: "POST",
+        credentials: "same-origin",
+        body: JSON.stringify(object),
+        headers: headers
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        });
 }
 
 /**

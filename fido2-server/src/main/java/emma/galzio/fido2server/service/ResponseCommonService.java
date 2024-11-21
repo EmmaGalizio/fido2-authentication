@@ -87,7 +87,9 @@ abstract public class ResponseCommonService {
         URI originFromRp;
         try {
             originFromClientData = new URI(collectedClientData.getOrigin());
+            log.info("originFromClientData: {}", originFromClientData);
             originFromRp = new URI(origin);
+            log.info("originFromRp: {}", originFromRp);
         } catch (URISyntaxException e) {
             throw new FIDO2ServerRuntimeException(InternalErrorCode.INVALID_ORIGIN, e);
         }

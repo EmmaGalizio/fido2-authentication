@@ -30,10 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -129,6 +126,10 @@ public class AdapterController {
         rp.setName("Test RP");
         // just for test
         rp.setId(rpId);
+        /*if(rpIdParam != null) {
+            log.info("rpId: {}", rpIdParam);
+            rp.setId(rpIdParam);
+        }*/
         ServerPublicKeyCredentialUserEntity user = new ServerPublicKeyCredentialUserEntity();
         user.setName(optionsRequest.getUsername());
         user.setId(createUserId(optionsRequest.getUsername()));
@@ -178,6 +179,8 @@ public class AdapterController {
     public AdapterServerResponse sendRegistrationResponse(
             @RequestHeader String host,
             @RequestBody AdapterRegServerPublicKeyCredential clientResponse,
+            //@RequestHeader(required = false, name = "X-Rp-Id") String rpIdParam,
+            @RequestHeader(required = false, name = "Origin") String rpIdParam,
             HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
         AdapterServerResponse serverResponse;
@@ -215,6 +218,12 @@ public class AdapterController {
         registerCredential.setSessionId(sessionId);
         //registerCredential.setOrigin(builder.toString());
         registerCredential.setOrigin(rpOrigin);
+        log.info("rpIdParam: {}", rpIdParam);
+        if(rpIdParam != null && !rpIdParam.isEmpty()) {
+
+            registerCredential.setOrigin(rpIdParam);
+        }
+
 
 
         HttpEntity<RegisterCredential> request = new HttpEntity<>(registerCredential, httpHeaders);
@@ -277,6 +286,9 @@ public class AdapterController {
     public AdapterServerResponse sendAuthenticationResponse(
             @RequestHeader String host,
             @RequestBody AdapterAuthServerPublicKeyCredential clientResponse,
+            //@RequestHeader(required = false, name = "X-Rp-Id") String rpIdParam,
+            @RequestHeader(required = false, name = "Origin") String rpIdParam,
+
             HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
         AdapterServerResponse serverResponse;
@@ -314,6 +326,10 @@ public class AdapterController {
         verifyCredential.setSessionId(sessionId);
         //verifyCredential.setOrigin(builder.toString());
         verifyCredential.setOrigin(rpOrigin);
+        log.info("rpIdParam: {}", rpIdParam);
+        if(rpIdParam != null && !rpIdParam.isEmpty()) {
+            verifyCredential.setOrigin(rpIdParam);
+        }
 
         HttpEntity<VerifyCredential> request = new HttpEntity<>(verifyCredential, httpHeaders);
 
